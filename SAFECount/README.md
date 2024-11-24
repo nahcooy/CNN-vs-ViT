@@ -7,6 +7,8 @@
 SAFECount는 이미지 내 객체의 개수를 세는 딥러닝 모델로, 특정 객체를 효율적으로 세는 데 활용할 수 있습니다.  
 본 문서는 SAFECount를 활용한 데이터 준비, 학습, 평가 및 시각화 과정을 설명합니다.
 
+[원본 git 주소](https://github.com/zhiyuanyou/SAFECount)
+
 ---
 
 #### 2. 필수 준비물

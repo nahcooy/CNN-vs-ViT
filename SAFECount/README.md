@@ -190,7 +190,7 @@ SAFECount는 이미지 내 객체의 개수를 세는 딥러닝 모델로, 특�
 
 2. **사전 학습된 가중치 사용 (선택 사항)**
    - 선택사항이지만, 원본 모델의 사전학습된 가중치를 사용하는 것이 좋다.
-   - [가중치 다운로드 링크]([https://drive.google.com/file/d/1mbV0xJdORIpSLlMCwlgENMB9Y1kUOhk2/view])  
+   - [가중치 다운로드 링크](https://drive.google.com/file/d/1mbV0xJdORIpSLlMCwlgENMB9Y1kUOhk2/view) 
    - 다운로드한 파일을 `checkpoints/camera/` 폴더에 저장.
 
 ---

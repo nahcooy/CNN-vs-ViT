@@ -1,0 +1,106 @@
+port: 22222
+random_seed: 888
+
+dataset:
+  type: custom_exemplar
+  exemplar:
+    img_dir:  /home/khtt/code/SAFECount/data/Chicken/camera/frames/
+    meta_file: /home/khtt/code/SAFECount/data/Chicken/camera/exemplar.json
+    norm: True
+    num_exemplar: 8
+  input_size:  [640, 640] # [h, w] [512, 512]
+  pixel_mean: [0.485, 0.456, 0.406]
+  pixel_std: [0.229, 0.224, 0.225]
+  batch_size: 1
+  workers: 6
+
+  train:
+    img_dir: /home/khtt/code/SAFECount/data/Chicken/camera_synthetic/frames/
+    density_dir: /home/khtt/code/SAFECount/data/Chicken/camera_synthetic/gt_density_map/
+    meta_file: /home/khtt/code/SAFECount/data/Chicken/camera_synthetic/train_no_origin.json
+    hflip:
+      prob: 0.5
+    vflip:
+      prob: 0.5
+    rotate:
+      degrees: 10
+    colorjitter:
+      brightness: 0.1
+      contrast: 0.1
+      saturation: 0.1
+      hue: 0.1
+      prob: 0.5
+    gamma:
+      range: [0.75, 1.5]
+      prob: 0.5
+    gray:
+      prob: 0.5
+  val:
+    img_dir: &img_test_dir /home/khtt/code/SAFECount/data/Chicken/camera/frames/
+    density_dir: /home/khtt/code/SAFECount/data/Chicken/camera/gt_density_map/
+    meta_file: /home/khtt/code/SAFECount/data/Chicken/camera/test.json
+
+criterion:
+  - name: _MSELoss
+    type: _MSELoss
+    kwargs:
+      outstride: 1
+      weight: 250
+
+trainer:
+  epochs: 100
+  lr_scale_backbone: 0 # 0: frozen, 0.1: 0.1 * lr, 1: lr
+  optimizer:
+    type: Adam
+    kwargs:
+#      lr: 0.00002
+      lr: 0.00002
+
+
+  lr_scheduler:
+    type: StepLR
+    kwargs:
+      step_size: 30
+      gamma: 0.8
+
+saver:
+  auto_resume: False
+  always_save: False
+#  load_path: checkpoints/camera/ckpt_best.pth.tar
+#  load_path: checkpoints/camera_synthetic/ckpt_best.pth.tar
+#  load_path: /home/khtt/code/SAFECount/experiments/FSC147/checkpoints/ckpt_best.pth.tar
+#  load_path: /home/khtt/code/SAFECount/experiments/FSC147/checkpoints/ckpt_best.pth.tar
+  load_path: checkpoints/camera_synthetic_noPretrain/ckpt_best.pth.tar
+  save_dir: checkpoints/camera_synthetic_noPretrain
+  log_dir: log/camera_synthetic_noPretrain
+
+evaluator:
+  save_dir: result_eval_temp
+
+visualizer:
+  vis_dir: vis/camera_synthetic_noPretrain3
+  img_dir: *img_test_dir
+  activation: sigmoid # [null, sigmoid]
+  normalization: True
+  with_image: True
+
+net:
+  builder: models.safecount_exemplar.build_network
+  kwargs:
+    block: 2
+    backbone:
+      type: resnet18
+      out_layers: [1, 2, 3]
+      out_stride: 4
+    pool:
+      type: max
+      size: [1, 1]
+    embed_dim: 256
+    mid_dim: 1024
+    head: 8
+    dropout: 0.1
+    activation: leaky_relu
+    exemplar_scales: []
+    initializer:
+      method: normal
+      std: 0.001

@@ -74,18 +74,117 @@ SAFECount는 이미지 내 객체의 개수를 세는 딥러닝 모델로, 특�
 
 1. **설정 파일 수정**
    - `SAFECount/experiments/Chicken/config_exemplar.yaml` 파일 수정:
-     - 데이터 경로 설정:
        ```yaml
-       dataset:
-         img_dir: "/home/{사용자}/SAFECount/data/Chicken/frames/"
-         meta_file: "/home/{사용자}/SAFECount/data/Chicken/exemplar.json"
-         ...
-       ```
-     - 체크포인트 저장 경로:
-       ```yaml
-       saver:
-         save_dir: checkpoints/camera
-         ...
+       port: 22222
+random_seed: 131
+
+dataset:
+  type: custom_exemplar
+  exemplar:
+		# the absolute path of frames folder in your computer
+    img_dir: &img_train_dir /home/khtt/code/SAFECount/data/Chicken/camera/frames/
+		# the absolute path of exemplar.json in your computer
+    meta_file: /home/khtt/code/SAFECount/data/Chicken/camera/exemplar.json
+    norm: True
+    num_exemplar: 8
+  input_size:  [512, 512] # [h, w]
+  pixel_mean: [0.485, 0.456, 0.406]
+  pixel_std: [0.229, 0.224, 0.225]
+  batch_size: 1
+  workers: 6
+
+  train:
+    img_dir: *img_train_dir
+		# the path of gt_density_map folder in your computer
+    density_dir: /home/khtt/code/SAFECount/data/Chicken/camera/gt_density_map/
+		# the absolute path of train.json in your computer
+    meta_file: /home/khtt/code/SAFECount/data/Chicken/camera/train.json
+    hflip:
+      prob: 0.5
+    vflip:
+      prob: 0.5
+    rotate:
+      degrees: 10
+    colorjitter:
+      brightness: 0.1
+      contrast: 0.1
+      saturation: 0.1
+      hue: 0.1
+      prob: 0.5
+    gamma:
+      range: [0.75, 1.5]
+      prob: 0.5
+    gray:
+      prob: 0.5
+  val:
+		# the absolute path of frames folder in your computer
+    img_dir: &img_test_dir /home/khtt/code/SAFECount/data/Chicken/camera/frames/
+		# the absolute path of gt_density_map folder in your computer
+    density_dir: /home/khtt/code/SAFECount/data/Chicken/camera/gt_density_map/
+		# the absolute path of test.json folder in your computer
+    meta_file: /home/khtt/code/SAFECount/data/Chicken/camera/test.json
+
+criterion:
+  - name: _MSELoss
+    type: _MSELoss
+    kwargs:
+      outstride: 1
+      weight: 250
+
+trainer:
+  epochs: 1000
+  lr_scale_backbone: 0 # 0: frozen, 0.1: 0.1 * lr, 1: lr
+  optimizer:
+    type: Adam
+    kwargs:
+      lr: 0.0002
+  lr_scheduler:
+    type: StepLR
+    kwargs:
+      step_size: 400
+      gamma: 0.25
+
+saver:
+  auto_resume: False
+  always_save: False
+	# path where to load the pretrain file
+  load_path: checkpoints/camera/ckpt_best.pth.tar
+	# path where the save checkpoint
+  save_dir: checkpoints/camera
+	# path where to store the log
+  log_dir: log/camera
+
+evaluator:
+  save_dir: result_eval_temp
+
+visualizer:
+	# path where to store visualization image, should use eval_torch_exemplar.sh to show
+  vis_dir: vis/camera
+  img_dir: *img_test_dir
+  activation: sigmoid # [null, sigmoid]
+  normalization: True
+  with_image: True
+
+net:
+  builder: models.safecount_exemplar.build_network
+  kwargs:
+    block: 2
+    backbone:
+      type: resnet18
+      out_layers: [1, 2, 3]
+      out_stride: 4
+    pool:
+      type: max
+      size: [1, 1]
+    embed_dim: 256
+    mid_dim: 1024
+    head: 8
+    dropout: 0.1
+    activation: leaky_relu
+    exemplar_scales: []
+    initializer:
+      method: normal
+      std: 0.001
        ```
 
 2. **사전 학습된 가중치 사용 (선택 사항)**

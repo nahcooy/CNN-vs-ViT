@@ -20,8 +20,8 @@ SAFECount는 이미지 내 객체의 개수를 세는 딥러닝 모델로, 특�
 
 2. **리포지토리 다운로드**
    ```bash
-   git clone https://github.com/kehuantiantang/SAFECount.git
-   cd SAFECount
+   git clone [https://github.com/kehuantiantang/SAFECount.git](https://github.com/nahcooy/CNN-vs-ViT.git)
+   cd CNN-vs-ViT/SAFECount
    ```
 
 3. **데이터 다운로드**

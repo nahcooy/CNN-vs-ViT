@@ -8,7 +8,4 @@
 
 <figure class="half">
   ![F1_curve](https://github.com/user-attachments/assets/bc5db111-bb7e-4c6e-983f-97010745122b)
-
-- 3.ant_gt_counts.csv : images_384_VarV2 의 ant수 정답값 
-- 4.evaluation_results_2.csv : Predict Accuracy 및 mae
 ---

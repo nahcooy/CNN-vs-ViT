@@ -1,6 +1,6 @@
 # YOLOv8_car
 ---
-## test 파일 
+## runs/detect/train_new 구성
 - 1.YOLO v8x 모델을 학습시킨 결과 : 
 ![results](https://github.com/user-attachments/assets/d1d75779-7b3d-4cc2-94b1-16b164e35eb8)
 

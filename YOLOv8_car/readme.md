@@ -6,6 +6,4 @@
 
 - 2.bounding_box_outputs:Predict 한 결과 = MAE : 1.4064, RMSE: 3.1500
 
-<figure class="half">
-  ![F1_curve](https://github.com/user-attachments/assets/bc5db111-bb7e-4c6e-983f-97010745122b)
 ---
